@@ -1,21 +1,50 @@
 # Sheet Music Playground
 
-A dependency-free sheet music game based on Piano Playground's design and rules. Open `index.html` in a modern browser. No build or installation is needed.
+**[Play Sheet Music Playground →](https://banesto.github.io/sheet-music-training/)**
 
-- **Name the note:** read a note on the staff and choose one of four solfège names.
-- **Place the note:** choose an accidental when enabled, then tap a line or space to submit immediately. Any octave of the requested name within the active range counts. Red areas outside the range cannot be selected. Accidentals must match the requested spelling.
-- Choose Sol (treble) or Fa (bass) clef, a Central staff, Upper octave, or Lower octave range, and natural notes or sharps/flats. Central staff is the default. Treble ranges: Do4–Sol5, Re5–Do6, Sol3–Fa4. Bass uses the same positions relative to its staff: Mi2–Si3, Fa3–Mi4, Si1–La2. Switching clefs preserves the range category and updates the note names.
-- 10 questions per round, 10 seconds each, 1,000 points for a correct answer plus up to 200 speed points. Wrong answers and timeouts earn zero. Correct feedback lasts 1 second; corrections last 2.4 seconds.
-- Piano-like sound plays after answering; Sound on/off controls audio. The question is silent so this remains a reading exercise.
-- After a placement mistake, the green correction and feedback tone use the nearest matching note within the active range. Equal-distance ties use the lower position. Result messages encourage practice at different score levels, reserving perfect-score praise for 10/10.
-- Settings stay fixed during a round. Play again repeats the settings; Change game returns to setup.
+Practice reading and placing sheet music with Do, Re, Mi, Fa, Sol, La, and Si. Play directly in your browser—no installation needed. The game follows Piano Playground’s visual style and scoring rules.
 
-The staff expands to include the question range and the clef's usual staff area. Ledger lines appear as needed. Placement mode also shows short ledger guides above and below the staff; hovering or focusing a position highlights the lines needed for that position. Natural semitone gaps are preserved; chromatic questions use conventional sharps and flats (without Mi♯, Si♯, Do♭, or Fa♭).
+## How to play
 
-## Local preview
+Choose a game, clef, note range, and whether to include sharps and flats, then start a round.
 
-Run `python3 -m http.server 8765` in this folder, then visit http://localhost:8765.
+- **Name the note:** read the note on the staff and choose its name from four answers.
+- **Place the note:** click or tap a line or space to answer immediately. When accidentals are enabled, choose flat, natural, or sharp before placing the note. Keyboard users can focus a staff position and press Enter or Space.
 
-## Checks
+Any octave of the requested note within the active range counts, with the requested accidental spelling. Correct placements turn green exactly where you placed them. After a mistake, the green correction shows the nearest matching note within the active range; equal-distance ties use the lower position. The feedback sound follows the displayed correct note.
 
-Run `node --check game.js` and `node tests/game.test.cjs`. The logic harness covers both modes, clefs, and accidental settings, full rounds, octave matching, scoring, wrong answers, timeouts, and all range presets. It uses a simulated DOM; browser checks separately verified treble rendering, bass rendering and placing Do in another octave. Audio listening and mobile hardware interaction have not been verified.
+Red areas are outside the active range and cannot be selected. Short ledger guides above and below the five staff lines help locate notes; hovering or focusing a position highlights the ledger lines needed for it.
+
+## Clefs and ranges
+
+Choose **Sol (treble)** or **Fa (bass)** clef. **Central staff** is selected by default. Changing clefs keeps the range category and updates the note labels. Octave 4 begins at middle Do.
+
+| Range | Sol · Treble | Fa · Bass |
+| --- | --- | --- |
+| Central staff | Do4–Sol5 | Mi2–Si3 |
+| Upper octave | Re5–Do6 | Fa3–Mi4 |
+| Lower octave | Sol3–Fa4 | Si1–La2 |
+
+The upper and lower ranges each contain seven note names, excluding the repeated octave endpoint. Choose natural notes only, or include conventional sharps and flats. Mi♯, Si♯, Do♭, and Fa♭ are excluded.
+
+## Rounds and feedback
+
+- **10 questions**, with **10 seconds per question**.
+- **1,000 points** per correct answer, plus up to **200 speed points**. Wrong answers and timeouts earn zero.
+- Correct feedback lasts 1 second; corrections last 2.4 seconds.
+- Results show correct answers, total thinking time, and points, with encouragement suited to the score. Perfect-score praise is reserved for 10/10.
+
+Questions are silent to focus on reading. A piano-like tone plays after answering; use **Sound on/off** to control it. Settings stay fixed during a round. **Play again** repeats the settings, **Change game** returns to setup, and **End round** leaves the current round.
+
+## Development and checks
+
+The game uses plain HTML, CSS, and JavaScript with no runtime dependencies or build step. GitHub Pages serves the repository root from `main`; pushing to `main` updates the published game.
+
+Run the checks with:
+
+```sh
+node --check game.js
+node tests/game.test.cjs
+```
+
+The simulated DOM tests cover both modes and clefs, accidental settings, complete rounds, scoring, timeouts, immediate placement submission, octave matching, all range presets, inactive placement areas, nearest-note corrections, and result messages. Earlier browser checks verified treble and bass rendering and placement in another octave. Audio listening and mobile hardware interaction remain unverified.
