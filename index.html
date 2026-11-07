@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sheet Music Playground</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<div class="layout"><main>
+<header><span class="logo">♫</span><span>Sheet Music Playground<small>A little practice. A lot of music.</small></span><button id="sound" class="quiet" aria-pressed="true">Sound on ♪</button></header>
+<section class="card">
+<div id="setup">
+<p class="eyebrow">YOUR NEXT MUSICAL ADVENTURE</p><h1>Little notes.<br>Big discoveries.</h1><p class="subtitle">Meet Do, Re, Mi and friends. Read a note, or give it a place on the staff.</p>
+<fieldset><legend>1. Choose your game</legend><div class="pickers"><button class="pick selected" data-mode="name" aria-pressed="true"><b>♫ Name the note</b><span>See a note on the staff. Choose its name.</span></button><button class="pick" data-mode="place" aria-pressed="false"><b>♪ Place the note</b><span>See a note name. Put it on the staff.</span></button></div></fieldset>
+<fieldset><legend>2. Choose your staff</legend><div class="options"><label>Clef<select id="clef"><option value="treble">Sol · Treble clef</option><option value="bass">Fa · Bass clef</option></select></label><label>Notes<select id="accidentals"><option value="natural">Natural notes</option><option value="all">Include sharps ♯ & flats ♭</option></select></label><label>From<select id="range-from"></select></label><label>To<select id="range-to"></select></label></div><p id="range-error" role="alert"></p></fieldset><div class="start-row"><button id="start" class="primary">Let’s play →</button><span>10 questions<br>10 seconds per question</span></div>
+</div>
+<div id="game" hidden>
+<div class="topbar"><span id="progress"></span><b id="score">0 pts</b><b id="timer" role="timer">10.0s</b></div><div class="track"><div id="timebar"></div></div>
+<div class="question"><p id="instruction" class="eyebrow"></p><h1 id="prompt"></h1><button id="replay" class="quiet">↻ Hear it again</button></div>
+<div id="staff" class="staff"></div><div id="placement" hidden><div id="accidental-picker" class="accidental-picker"><button data-acc="-1" aria-pressed="false">♭ Flat</button><button data-acc="0" class="selected" aria-pressed="true">♮ Natural</button><button data-acc="1" aria-pressed="false">♯ Sharp</button></div><div class="position-controls"><button id="lower" class="quiet" aria-label="Move note down">↓ Lower</button><button id="higher" class="quiet" aria-label="Move note up">↑ Higher</button></div><p class="placement-tip">Tap a line or space. Any octave of the named note counts.</p><button id="submit" class="primary" disabled>Check note →</button></div><div id="answers" class="answers" role="group" aria-label="Note choices"></div><p id="feedback" aria-live="polite"></p><div class="game-footer"><span id="game-detail"></span><button id="quit" class="quiet">End round</button></div>
+</div>
+<div id="results" class="results" hidden><div class="result-icon">♫</div><p class="eyebrow">ROUND COMPLETE</p><h1 id="result-title"></h1><p id="result-message" class="subtitle"></p><div class="stats"><div><strong id="correct-stat"></strong><span>correct notes</span></div><div><strong id="time-stat"></strong><span>thinking time</span></div><div><strong id="score-stat"></strong><span>points earned</span></div></div><p>1 000 points per correct note + up to 200 speed points.</p><button id="again" class="primary">Play again ↻</button><button id="settings" class="quiet">Change game</button></div>
+</section><p class="footnote">A little tip: accuracy comes first. Speed will follow.</p>
+</main></div>
+<script src="game.js"></script></body></html>
