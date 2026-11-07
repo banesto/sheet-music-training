@@ -34,7 +34,7 @@ console.log('PASS: correct Si feedback marks only the placed octave in green, fo
 
 
 // Each teaching range has exact bounds, shading and only active placement targets.
-for(const [clef,expected] of [['treble',[[28,39],[35,42],[25,32]]],['bass',[[16,27],[23,30],[13,20]]]]){
+for(const [clef,expected] of [['treble',[[28,39],[36,42],[25,31]]],['bass',[[16,27],[24,30],[13,19]]]]){
   for(const [i,key] of ['central','upper','lower'].entries()){
     run(`mode='place';$('#clef').value='${clef}';$('#range').value='${key}';defaults();start()`);
     assert.equal(run("$('#range').children.length"),3);

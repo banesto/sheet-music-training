@@ -10,7 +10,7 @@ let mode='name',clef='treble',chromatic=false,questions,index,score,correct,thin
 function initAudio(){try{audio ||= new (window.AudioContext||window.webkitAudioContext)();audio.resume().catch(()=>{});}catch{$('#sound').textContent='Sound unavailable';}}
 function play(n){if(muted||!audio||audio.state!=='running')return;const t=audio.currentTime,f=440*2**((pitch(n)-69)/12);[1,2,3,4,5].forEach((h,i)=>{const o=audio.createOscillator(),g=audio.createGain();o.frequency.value=f*h;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.19/h**1.8,t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+1.5/(1+i*.25));o.connect(g);g.connect(audio.destination);o.start(t);o.stop(t+1.6);});}
 function screen(id){['setup','game','results'].forEach(s=>$('#'+s).hidden=s!==id);}
-const ranges={central:{name:'Central staff',offsets:[-2,9]},upper:{name:'Upper octave',offsets:[5,12]},lower:{name:'Lower octave',offsets:[-5,2]}};
+const ranges={central:{name:'Central staff',offsets:[-2,9]},upper:{name:'Upper octave',offsets:[6,12]},lower:{name:'Lower octave',offsets:[-5,1]}};
 function rangeBounds(key=$('#range').value){const bottom=$('#clef').value==='bass'?18:30,[from,to]=(ranges[key]||ranges.central).offsets;return {from:bottom+from,to:bottom+to};}
 function defaults(){const value=ranges[$('#range').value]?$('#range').value:'central';$('#range').replaceChildren();for(const [key,range] of Object.entries(ranges)){const {from,to}=rangeBounds(key),o=document.createElement('option');o.value=key;o.textContent=`${range.name} · ${names[from%7]}${Math.floor(from/7)} – ${names[to%7]}${Math.floor(to/7)}`;$('#range').append(o);}$('#range').value=value;}
 $('#clef').onchange=defaults;defaults();
