@@ -86,6 +86,6 @@ console.log('PASS: nearest correction position and accidental, rendered correcti
 
 run("mode='place';$('#range').value='central';start()");
 const bands=run("$('#staff').children[0].children.filter(e=>e.role==='button')");
-assert.equal(bands[0].height,13.8);
+assert.equal(bands[0].height,16.56);
 for(let i=1;i<bands.length;i++)assert(Math.abs(bands[i-1].y-bands[i].y-bands[i].height)<1e-9);
-console.log('PASS: placement bands are 15% taller and remain contiguous without overlap.');
+console.log('PASS: placement bands are 38% taller than the original and remain contiguous without overlap.');
