@@ -9,7 +9,7 @@ A dependency-free sheet music game based on Piano Playground's design and rules.
 - Piano-like sound plays after answering; Sound on/off controls audio. The question is silent so this remains a reading exercise.
 - Settings stay fixed during a round. Play again repeats the settings; Change game returns to setup.
 
-The staff expands to include the question range and the clef's usual staff area. Ledger lines appear as needed. Natural semitone gaps are preserved; chromatic questions use conventional sharps and flats (without Mi♯, Si♯, Do♭, or Fa♭).
+The staff expands to include the question range and the clef's usual staff area. Ledger lines appear as needed. Placement mode also shows short ledger guides above and below the staff; hovering or focusing a position highlights the lines needed for that position. Natural semitone gaps are preserved; chromatic questions use conventional sharps and flats (without Mi♯, Si♯, Do♭, or Fa♭).
 
 ## Local preview
 

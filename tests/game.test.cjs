@@ -31,3 +31,26 @@ for(const clef of ['treble','bass']){
   assert.equal(heads[0].cx,350);
 }
 console.log('PASS: correct Si feedback marks only the placed octave in green, for both clefs.');
+
+// Ledger guides are visible before placing a note and highlight without submitting.
+for(const clef of ['treble','bass']){
+  run(`mode='place';$('#clef').value='${clef}';defaults();$('#range-from').value=14;$('#range-to').value=48;start()`);
+  const children=run("$('#staff').children[0].children");
+  const guides=children.filter(e=>e.tag==='line'&&e.x1===320&&e.x2===380);
+  assert(guides.length>0);
+  const bottom=clef==='treble'?30:18;
+  for(const step of [bottom-1,bottom-2,bottom-3,bottom-4,bottom+9,bottom+10,bottom+11,bottom+12]){
+    const hit=children.filter(e=>e.role==='button')[step-run('low')];
+    hit.events.pointerenter();
+    const expected=step<bottom?Math.floor((bottom-step)/2):Math.floor((step-bottom-8)/2);
+    assert.equal(guides.filter(e=>e.stroke==='#227b67').length,expected);
+    assert.equal(run('accepting'),true);
+    assert.equal(run('selected'),null);
+    hit.events.pointerleave();
+    assert(guides.every(e=>e.stroke==='#b7c4bb'));
+    hit.events.focus();
+    assert.equal(guides.filter(e=>e.stroke==='#227b67').length,expected);
+    hit.events.blur();
+  }
+}
+console.log('PASS: ledger guides above/below both clefs, line/space highlighting, hover and focus do not submit.');
