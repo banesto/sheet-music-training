@@ -27,7 +27,7 @@ for(const clef of ['treble','bass']){
   const heads=run("$('#staff').children[0].children.filter(e=>e.tag==='ellipse')");
   assert.equal(heads.length,1);
   assert.equal(heads[0].fill,'#227b67');
-  assert.equal(heads[0].cy,run('28+(high-selected)*12'));
+  assert.equal(heads[0].cy,run('28+(high-selected)*staffStep'));
   assert.equal(heads[0].cx,350);
 }
 console.log('PASS: correct Si feedback marks only the placed octave in green, for both clefs.');
@@ -72,7 +72,7 @@ for(const [target,choice,expected] of [
 }
 run("start();questions[0]={step:28,acc:0};selected=36;acc=0;answer({step:selected,acc})");
 const correction=run("$('#staff').children[0].children.find(e=>e.tag==='ellipse'&&e.fill==='#227b67')");
-assert.equal(correction.cy,run('28+(high-35)*12'));
+assert.equal(correction.cy,run('28+(high-35)*staffStep'));
 const titles=new Set();
 for(let count=0;count<=10;count++){
   run(`correct=${count};finish()`);
@@ -83,3 +83,9 @@ for(let count=0;count<=10;count++){
 }
 assert.equal(titles.size,5);
 console.log('PASS: nearest correction position and accidental, rendered correction octave, five score-specific encouragement levels.');
+
+run("mode='place';$('#range').value='central';start()");
+const bands=run("$('#staff').children[0].children.filter(e=>e.role==='button')");
+assert.equal(bands[0].height,13.8);
+for(let i=1;i<bands.length;i++)assert(Math.abs(bands[i-1].y-bands[i].y-bands[i].height)<1e-9);
+console.log('PASS: placement bands are 15% taller and remain contiguous without overlap.');

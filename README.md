@@ -13,7 +13,7 @@ Choose a game, clef, note range, and whether to include sharps and flats, then s
 
 Any octave of the requested note within the active range counts, with the requested accidental spelling. Correct placements turn green exactly where you placed them. After a mistake, the green correction shows the nearest matching note within the active range; equal-distance ties use the lower position. The feedback sound follows the displayed correct note.
 
-Red areas are outside the active range and cannot be selected. Short ledger guides above and below the five staff lines help locate notes; hovering or focusing a position highlights the ledger lines needed for it.
+The enlarged staff gives each line or space a taller hover and click area for easier placement. Red areas are outside the active range and cannot be selected. Short ledger guides above and below the five staff lines help locate notes; hovering or focusing a position highlights the ledger lines needed for it.
 
 ## Clefs and ranges
 
