@@ -7,6 +7,7 @@ A dependency-free sheet music game based on Piano Playground's design and rules.
 - Choose Sol (treble) or Fa (bass) clef, a Central staff, Upper octave, or Lower octave range, and natural notes or sharps/flats. Central staff is the default. Treble ranges: Do4–Sol5, Re5–Do6, Sol3–Fa4. Bass uses the same positions relative to its staff: Mi2–Si3, Fa3–Mi4, Si1–La2. Switching clefs preserves the range category and updates the note names.
 - 10 questions per round, 10 seconds each, 1,000 points for a correct answer plus up to 200 speed points. Wrong answers and timeouts earn zero. Correct feedback lasts 1 second; corrections last 2.4 seconds.
 - Piano-like sound plays after answering; Sound on/off controls audio. The question is silent so this remains a reading exercise.
+- After a placement mistake, the green correction and feedback tone use the nearest matching note within the active range. Equal-distance ties use the lower position. Result messages encourage practice at different score levels, reserving perfect-score praise for 10/10.
 - Settings stay fixed during a round. Play again repeats the settings; Change game returns to setup.
 
 The staff expands to include the question range and the clef's usual staff area. Ledger lines appear as needed. Placement mode also shows short ledger guides above and below the staff; hovering or focusing a position highlights the lines needed for that position. Natural semitone gaps are preserved; chromatic questions use conventional sharps and flats (without Mi♯, Si♯, Do♭, or Fa♭).

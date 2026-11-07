@@ -12,6 +12,19 @@ function play(n){if(muted||!audio||audio.state!=='running')return;const t=audio.
 function screen(id){['setup','game','results'].forEach(s=>$('#'+s).hidden=s!==id);}
 const ranges={central:{name:'Central staff',offsets:[-2,9]},upper:{name:'Upper octave',offsets:[6,12]},lower:{name:'Lower octave',offsets:[-5,1]}};
 function rangeBounds(key=$('#range').value){const bottom=$('#clef').value==='bass'?18:30,[from,to]=(ranges[key]||ranges.central).offsets;return {from:bottom+from,to:bottom+to};}
+function nearestCorrectNote(target,choice){
+if(mode!=='place'||choice===null)return target;
+const {from,to}=rangeBounds();let nearest=null;
+for(let step=from;step<=to;step++)if(step%7===target.step%7&&(nearest===null||Math.abs(step-choice.step)<Math.abs(nearest.step-choice.step)))nearest={step,acc:target.acc};
+return nearest||target;
+}
+function resultEncouragement(count){
+if(count===10)return {title:'All 10 notes correct!',message:'You recognized every note. Ready for another range?'};
+if(count>=8)return {title:'Almost there!',message:'Review the notes you missed, then try for all 10.'};
+if(count>=5)return {title:'Keep building your note skills!',message:'Take your time with each line and space. Try another round.'};
+if(count>=1)return {title:'Keep practicing, one note at a time.',message:'Look carefully at each line and space. A few more tries will help.'};
+return {title:'Let’s try again, one note at a time.',message:'Start with the central staff range and take your time finding each note.'};
+}
 function defaults(){const value=ranges[$('#range').value]?$('#range').value:'central';$('#range').replaceChildren();for(const [key,range] of Object.entries(ranges)){const {from,to}=rangeBounds(key),o=document.createElement('option');o.value=key;o.textContent=`${range.name} · ${names[from%7]}${Math.floor(from/7)} – ${names[to%7]}${Math.floor(to/7)}`;$('#range').append(o);}$('#range').value=value;}
 $('#clef').onchange=defaults;defaults();
 function start(){initAudio();clearInterval(ticker);clearTimeout(advance);clef=$('#clef').value;chromatic=$('#accidentals').value==='all';const {from,to}=rangeBounds();let pool=[];for(let step=from;step<=to;step++){pool.push({step,acc:0});if(chromatic){if(![2,6].includes(step%7))pool.push({step,acc:1});if(![0,3].includes(step%7))pool.push({step,acc:-1});}}questions=[];while(questions.length<10)questions.push(...shuffle(pool));questions=questions.slice(0,10);low=Math.min(from,clef==='treble'?28:16)-1;high=Math.max(to,clef==='treble'?40:28)+1;index=score=correct=thinking=0;screen('game');render();ticker=setInterval(tick,50);}
@@ -29,7 +42,7 @@ const placed=selected===null?null:{step:selected,acc};
 const correctPlacement=mode==='place'&&placed!==null&&matches(placed,questions[index]);
 if(mode==='name')note(questions[index],reveal?'#227b67':'#263b38');
 else if(reveal&&correctPlacement)note(placed,'#227b67');
-else{if(reveal)note(questions[index],'#227b67');if(placed!==null)note(placed,reveal?'#e3a852':'#227b67',reveal?470:350);}
+else{if(reveal)note(nearestCorrectNote(questions[index],placed),'#227b67');if(placed!==null)note(placed,reveal?'#e3a852':'#227b67',reveal?470:350);}
 if(mode==='place'&&accepting){
 const guides=[];
 for(let step=bottom-2;step>=low;step-=2)guides.push({step,line:el('line',{x1:320,x2:380,y1:y(step),y2:y(step),stroke:'#b7c4bb','stroke-width':1.5,'pointer-events':'none'})});
@@ -39,7 +52,7 @@ for(let step=bounds.from;step<=bounds.to;step++){const hit=el('rect',{x:130,y:y(
 function setAcc(value){acc=value;document.querySelectorAll('[data-acc]').forEach(b=>{const on=+b.dataset.acc===acc;b.classList.toggle('selected',on);b.setAttribute('aria-pressed',on);});if(selected!==null)drawStaff();}
 document.querySelectorAll('[data-acc]').forEach(b=>b.onclick=()=>{if(accepting)setAcc(+b.dataset.acc);});
 function tick(){if(!accepting)return;const left=Math.max(0,10-(performance.now()-started)/1000);$('#timer').textContent=`${left.toFixed(1)}s`;$('#timebar').style.width=`${left*10}%`;if(left<=0)answer(null);}
-function answer(choice){if(!accepting)return;accepting=false;const elapsed=Math.min(10,(performance.now()-started)/1000);thinking+=elapsed;const target=questions[index],ok=matches(choice,target);let earned=0;if(ok){correct++;earned=1000+Math.round(200*Math.max(0,1-elapsed/10));score+=earned;}$('#score').textContent=`${number(score)} pts`;$('#feedback').textContent=ok?`Yes, ${label(target)}! +${number(earned)} points`:`${choice===null?'Time’s up!':'Keep practicing!'} The note is ${label(target)}.`;document.querySelectorAll('.answer').forEach(b=>{b.disabled=true;b.classList.toggle('correct',b.dataset.name===label(target));b.classList.toggle('wrong',choice!==null&&b.dataset.name===label(choice)&&!ok);});document.querySelectorAll('[data-acc]').forEach(b=>b.disabled=true);drawStaff(true);play(ok&&mode==='place'?choice:target);advance=setTimeout(()=>{document.querySelectorAll('[data-acc]').forEach(b=>b.disabled=false);index++;if(index===10)finish();else render();},ok?1000:2400);}
-function finish(){clearInterval(ticker);screen('results');$('#result-title').textContent=correct===10?'A perfect performance!':correct>=7?'Beautiful playing!':'Every note is progress!';$('#result-message').textContent=`You matched ${correct} of 10 notes. Keep your musical adventure going.`;$('#correct-stat').textContent=`${correct}/10`;$('#time-stat').textContent=`${thinking.toFixed(1)}s`;$('#score-stat').textContent=number(score);$('#again').focus();}
+function answer(choice){if(!accepting)return;accepting=false;const elapsed=Math.min(10,(performance.now()-started)/1000);thinking+=elapsed;const target=questions[index],ok=matches(choice,target);let earned=0;if(ok){correct++;earned=1000+Math.round(200*Math.max(0,1-elapsed/10));score+=earned;}$('#score').textContent=`${number(score)} pts`;$('#feedback').textContent=ok?`Yes, ${label(target)}! +${number(earned)} points`:`${choice===null?'Time’s up!':'Keep practicing!'} The note is ${label(target)}.`;document.querySelectorAll('.answer').forEach(b=>{b.disabled=true;b.classList.toggle('correct',b.dataset.name===label(target));b.classList.toggle('wrong',choice!==null&&b.dataset.name===label(choice)&&!ok);});document.querySelectorAll('[data-acc]').forEach(b=>b.disabled=true);drawStaff(true);play(mode==='place'?(ok?choice:nearestCorrectNote(target,choice)):target);advance=setTimeout(()=>{document.querySelectorAll('[data-acc]').forEach(b=>b.disabled=false);index++;if(index===10)finish();else render();},ok?1000:2400);}
+function finish(){clearInterval(ticker);screen('results');const encouragement=resultEncouragement(correct);$('#result-title').textContent=encouragement.title;$('#result-message').textContent=`You matched ${correct} of 10 notes. ${encouragement.message}`;$('#correct-stat').textContent=`${correct}/10`;$('#time-stat').textContent=`${thinking.toFixed(1)}s`;$('#score-stat').textContent=number(score);$('#again').focus();}
 document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;document.querySelectorAll('[data-mode]').forEach(el=>{el.classList.toggle('selected',el===b);el.setAttribute('aria-pressed',el===b);});});
 $('#start').onclick=start;$('#again').onclick=start;$('#settings').onclick=()=>screen('setup');$('#quit').onclick=()=>{clearInterval(ticker);clearTimeout(advance);accepting=false;document.querySelectorAll('[data-acc]').forEach(b=>b.disabled=false);screen('setup');};$('#sound').onclick=()=>{muted=!muted;if(!muted)initAudio();$('#sound').textContent=muted?'Sound off':'Sound on ♪';$('#sound').setAttribute('aria-pressed',!muted);};

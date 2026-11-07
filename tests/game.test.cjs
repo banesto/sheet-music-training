@@ -57,3 +57,29 @@ for(const [clef,expected] of [['treble',[[28,39],[36,42],[25,31]]],['bass',[[16,
 run("$('#range').value='';defaults()");assert.equal(run("$('#range').value"),'central');
 run("$('#range').value='upper';$('#clef').value='treble';defaults()");assert.equal(run("$('#range').value"),'upper');
 console.log('PASS: three teaching ranges per clef, bounds, inactive red shading, active-only click targets and central default.');
+
+// Corrections choose the closest valid octave, including range edges and accidentals.
+run("mode='place';$('#clef').value='treble';$('#range').value='central';defaults()");
+for(const [target,choice,expected] of [
+  [{step:28,acc:0},{step:36,acc:0},35],
+  [{step:35,acc:0},{step:29,acc:0},28],
+  [{step:32,acc:1},{step:38,acc:0},39],
+  [{step:39,acc:-1},{step:28,acc:0},32]
+]){
+  ctx.target=target;ctx.choice=choice;
+  assert.equal(run('nearestCorrectNote(target,choice).step'),expected);
+  assert.equal(run('nearestCorrectNote(target,choice).acc'),target.acc);
+}
+run("start();questions[0]={step:28,acc:0};selected=36;acc=0;answer({step:selected,acc})");
+const correction=run("$('#staff').children[0].children.find(e=>e.tag==='ellipse'&&e.fill==='#227b67')");
+assert.equal(correction.cy,run('28+(high-35)*12'));
+const titles=new Set();
+for(let count=0;count<=10;count++){
+  run(`correct=${count};finish()`);
+  const title=run("$('#result-title').textContent");titles.add(title);
+  assert(!title.includes('Beautiful playing'));
+  assert.equal(title==='All 10 notes correct!',count===10);
+  assert(run("$('#result-message').textContent").includes(`${count} of 10`));
+}
+assert.equal(titles.size,5);
+console.log('PASS: nearest correction position and accidental, rendered correction octave, five score-specific encouragement levels.');
