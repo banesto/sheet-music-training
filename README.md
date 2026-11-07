@@ -3,7 +3,7 @@
 A dependency-free sheet music game based on Piano Playground's design and rules. Open `index.html` in a modern browser. No build or installation is needed.
 
 - **Name the note:** read a note on the staff and choose one of four solfège names.
-- **Place the note:** tap a line or space, or use Lower / Higher, choose an accidental when enabled, then press Check note. Any octave of the requested name counts, including positions outside the question range. Accidentals must match the requested spelling.
+- **Place the note:** choose an accidental when enabled, then tap a line or space to submit immediately. Any octave of the requested name counts, including positions outside the question range. Accidentals must match the requested spelling.
 - Choose Sol (treble) or Fa (bass) clef, an inclusive question range from Do2–Si6, and natural notes or sharps/flats. Octave 4 starts at middle Do. Switching clefs resets the range to a useful default.
 - 10 questions per round, 10 seconds each, 1,000 points for a correct answer plus up to 200 speed points. Wrong answers and timeouts earn zero. Correct feedback lasts 1 second; corrections last 2.4 seconds.
 - Piano-like sound plays after answering; Sound on/off controls audio. The question is silent so this remains a reading exercise.
