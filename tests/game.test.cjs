@@ -9,7 +9,7 @@ run("start();answer(null)");assert.equal(run('score'),0);assert.equal(run('corre
 for(const activation of ['click','keydown']){
   run("mode='place';$('#clef').value='treble';defaults();start();setAcc(questions[0].acc)");
   const hits=run("$('#staff').children[0].children.filter(e=>e.role==='button')");
-  const targetIndex=run('questions[0].step-low');
+  const targetIndex=run('questions[0].step-rangeBounds().from');
   const hit=hits[targetIndex];
   if(activation==='click')hit.events.click();
   else hit.events.keydown({key:'Enter',preventDefault(){}});
@@ -32,39 +32,28 @@ for(const clef of ['treble','bass']){
 }
 console.log('PASS: correct Si feedback marks only the placed octave in green, for both clefs.');
 
-// Ledger guides are visible before placing a note and highlight without submitting.
-for(const clef of ['treble','bass']){
-  run(`mode='place';$('#clef').value='${clef}';defaults();$('#range').value='3';start()`);
-  const children=run("$('#staff').children[0].children");
-  const guides=children.filter(e=>e.tag==='line'&&e.x1===320&&e.x2===380);
-  assert(guides.length>0);
-  const bottom=clef==='treble'?30:18;
-  for(const step of [bottom-1,bottom-2,bottom-3,bottom-4,bottom+9,bottom+10,bottom+11,bottom+12]){
-    const hit=children.filter(e=>e.role==='button')[step-run('low')];
-    hit.events.pointerenter();
-    const expected=step<bottom?Math.floor((bottom-step)/2):Math.floor((step-bottom-8)/2);
-    assert.equal(guides.filter(e=>e.stroke==='#227b67').length,expected);
+
+// Each teaching range has exact bounds, shading and only active placement targets.
+for(const [clef,expected] of [['treble',[[28,39],[35,42],[25,32]]],['bass',[[16,27],[23,30],[13,20]]]]){
+  for(const [i,key] of ['central','upper','lower'].entries()){
+    run(`mode='place';$('#clef').value='${clef}';$('#range').value='${key}';defaults();start()`);
+    assert.equal(run("$('#range').children.length"),3);
+    assert.equal(JSON.stringify(run('rangeBounds()')),JSON.stringify({from:expected[i][0],to:expected[i][1]}));
+    assert(run('questions.every(n=>n.step>=rangeBounds().from&&n.step<=rangeBounds().to)'));
+    const children=run("$('#staff').children[0].children");
+    const hits=children.filter(e=>e.role==='button');
+    assert.equal(hits.length,expected[i][1]-expected[i][0]+1);
+    const shaded=children.filter(e=>e.fill==='#fce6e0');
+    assert.equal(shaded.length,2);
+    assert(shaded.every(e=>e.height>0&&!e.events.click));
+    hits[0].events.pointerenter();
     assert.equal(run('accepting'),true);
     assert.equal(run('selected'),null);
-    hit.events.pointerleave();
-    assert(guides.every(e=>e.stroke==='#b7c4bb'));
-    hit.events.focus();
-    assert.equal(guides.filter(e=>e.stroke==='#227b67').length,expected);
-    hit.events.blur();
+    hits[0].events.pointerleave();
+    hits[0].events.focus();hits[0].events.blur();
+    hits[0].events.click();assert.equal(run('selected'),expected[i][0]);
   }
 }
-console.log('PASS: ledger guides above/below both clefs, line/space highlighting, hover and focus do not submit.');
-
-for(const [clef,expected] of [['treble',[[29,39],[27,41],[25,43],[23,45]]],['bass',[[17,27],[15,29],[13,31],[11,33]]]]){
-  run(`$('#clef').value='${clef}';defaults()`);
-  assert.equal(run("$('#range').children.length"),4);
-  for(let extra=0;extra<4;extra++){
-    run(`$('#range').value='${extra}'`);
-    assert.equal(JSON.stringify(run('rangeBounds()')),JSON.stringify({from:expected[extra][0],to:expected[extra][1]}));
-    run('start()');
-    assert(run('questions.every(n=>n.step>=rangeBounds().from&&n.step<=rangeBounds().to)'));
-  }
-}
-run("$('#range').value='';defaults()");assert.equal(run("$('#range').value"),'1');
-run("$('#range').value='2';$('#clef').value='treble';defaults()");assert.equal(run("$('#range').value"),'2');
-console.log('PASS: four named range presets per clef, question bounds, one-line default and preserved selection on clef change.');
+run("$('#range').value='';defaults()");assert.equal(run("$('#range').value"),'central');
+run("$('#range').value='upper';$('#clef').value='treble';defaults()");assert.equal(run("$('#range').value"),'upper');
+console.log('PASS: three teaching ranges per clef, bounds, inactive red shading, active-only click targets and central default.');
